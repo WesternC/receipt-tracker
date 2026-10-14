@@ -251,7 +251,7 @@ def process_receipt_image(image_file, user_id):
         merchant_record = cur.fetchone()
         if not merchant_record:
             cur.execute("INSERT INTO merchants (name, type) VALUES (%s, %s) RETURNING id", (my_receipt.merchant, 'Grocery Store'))
-            merchant_id = cur.sfetchone()[0]
+            merchant_id = cur.fetchone()[0]
         else:
             merchant_id = merchant_record[0]
         cur.execute("""

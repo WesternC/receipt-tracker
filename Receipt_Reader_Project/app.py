@@ -118,6 +118,7 @@ def upload():
             os.remove(filename)
             flash("Receipt processed successfully!")
         except Exception as e:
+            print(f"UPLOAD CRASHED: {str(e)}")
             flash(f"An error occurred while processing the receipt: {str(e)}")
             return redirect(url_for('welcome'))
         return redirect(url_for('welcome'))
