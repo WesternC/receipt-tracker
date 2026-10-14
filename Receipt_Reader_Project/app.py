@@ -130,7 +130,7 @@ def history():
         flash("You must be logged in to view your receipt history.")
         return redirect(url_for('home'))
     try:
-        with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
+        with psycopg.connect(os.getenv("DATABASE_URL"), row_factory=dict_row) as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT receipts.id, merchants.name, receipts.purchase_total, receipts.receipt_date, receipt_items.category, receipt_items.item, receipt_items.price
