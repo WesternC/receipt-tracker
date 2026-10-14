@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grocery Tracker - Sign In</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #FAF8F5;
+      color: #2D3748;
+    }
+
+    /* Full-screen split container */
+    .split-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100vw;
+    }
+
+    /* Left Side: Earthy, abstract river curves */
+    .art-panel {
+      flex: 1.1;
+      position: relative;
+      background: linear-gradient(135deg, #F1ECE4 0%, #E3D9C9 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .art-panel svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Right Side: Login area */
+    .form-panel {
+      flex: 0.9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background-color: #FAF8F5;
+    }
+
+    /* Centered Login Card */
+    .login-card {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .welcome-text {
+      font-size: 0.95rem;
+      color: #7A6F64;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .login-card h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #263A33;
+      margin-bottom: 28px;
+    }
+
+    /* Form & Inputs */
+    .login-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid #DDD6CC;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      text-align: center;
+      outline: none;
+      background-color: #FFFFFF;
+      color: #333333;
+      transition: border-color 0.2s ease;
+    }
+
+    .login-form input:focus {
+      border-color: #4A6B5D;
+    }
+
+    /* Pill Login Button */
+    .login-form button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 6px;
+      background-color: #2E4B40;
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .login-form button:hover {
+      background-color: #233931;
+    }
+
+    /* Account prompt */
+    .signup-prompt {
+      margin-top: 24px;
+      font-size: 0.88rem;
+      color: #7A6F64;
+    }
+
+    .signup-prompt a {
+      color: #C16A4D;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-prompt a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split-layout">
+    
+    <!-- Left panel with abstract earthy curves -->
+    <div class="art-panel">
+      <svg viewBox="0 0 800 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Flowing earthy layered bands -->
+        <path d="M-50,0 C200,200 100,500 0,1000 L-50,1000 Z" fill="#D98A6C" opacity="0.85" />
+        <path d="M50,0 C320,180 220,550 150,1000 L-50,1000 L-50,0 Z" fill="#E2BA85" opacity="0.6" />
+        <path d="M120,0 C450,220 280,680 320,1000 L-50,1000 L-50,0 Z" fill="#7C9885" opacity="0.75" />
+        <path d="M260,0 C550,280 430,720 520,1000 L-50,1000 L-50,0 Z" fill="#4B6E60" opacity="0.8" />
+        
+        <!-- Curved river-like barrier on the right edge -->
+        <path d="M520,0 C740,240 600,680 720,1000 L800,1000 L800,0 Z" fill="#FAF8F5" />
+        
+        <!-- Subtle accent contour line -->
+        <path d="M500,0 C720,240 580,680 700,1000" fill="none" stroke="#2E4B40" stroke-width="22" stroke-linecap="round" opacity="0.9" />
+      </svg>
+    </div>
+
+    <!-- Right panel with login card -->
+    <div class="form-panel">
+      <div class="login-card">
+        <p class="welcome-text">Welcome to Grocery Tracker</p>
+        <h2>Sign In</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div style="color: #b91c1c; margin-bottom: 15px; font-size: 0.9rem;">
+              {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form class="login-form" method="POST">
+          <input type="text" name="username" placeholder="Username" required>
+          <input type="password" name="user_password" placeholder="Password" required>
+          <button type="submit">LOGIN</button>
+        </form>
+
+        <p class="signup-prompt">
+          Don't have an account? <a href="{{ url_for('register') }}">Create account</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

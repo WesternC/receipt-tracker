@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Receipt</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            /* Same flowing river background */
+            background: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,100 C250,200 750,0 1000,100 L1000,200 L0,200 Z' fill='rgba(32, 158, 179, 0.6)'/%3E%3C/svg%3E") 0% 100% / 1000px 200px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,50 C300,-50 600,250 1000,50 L1000,200 L0,200 Z' fill='rgba(25, 125, 150, 0.4)'/%3E%3C/svg%3E") 30% 100% / 1200px 250px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,150 C400,250 600,-50 1000,150 L1000,200 L0,200 Z' fill='rgba(18, 97, 128, 0.3)'/%3E%3C/svg%3E") 70% 100% / 1500px 300px repeat-x,
+                linear-gradient(to bottom, #05141c 0%, #0a2330 50%, #0f3d54 100%);
+            background-attachment: fixed;
+            color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Navigation Button */
+        .nav-btn {
+            position: absolute;
+            top: 25px;
+            left: 35px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 0.9rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+            z-index: 2; 
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Frosted glass container */
+        .upload-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 50px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            z-index: 1;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        /* Custom File Input Styling */
+        input[type="file"] {
+            font-family: sans-serif;
+            margin-bottom: 30px;
+            color: white;
+            width: 100%;
+        }
+        
+        input[type="file"]::file-selector-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 15px;
+            font-family: sans-serif;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Submit Button Styling */
+        .submit-btn {
+            background: #209eb3;
+            color: white;
+            border: none;
+            padding: 15px 24px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: sans-serif;
+            transition: background 0.3s ease;
+            width: 100%;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background: #177d8f;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="{{ url_for('welcome') }}" class="nav-btn">Back to Dashboard</a>
+
+    <div class="upload-card">
+        <h2>Upload Receipt</h2>
+        
+        <!-- The form action points exactly to the /upload route -->
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+            
+            <!-- name="receipt_image" connects perfectly with your app.py -->
+            <!-- accept="image/*" capture="environment" enables the camera on mobile devices -->
+            <input type="file" name="receipt_image" accept="image/*" capture="environment" required>
+            
+            <button type="submit" class="submit-btn">Upload to Database</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt History</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            /* New Purple Theme Waves and Gradient */
+            background: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,100 C250,200 750,0 1000,100 L1000,200 L0,200 Z' fill='rgba(155, 89, 182, 0.6)'/%3E%3C/svg%3E") 0% 100% / 1000px 200px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,50 C300,-50 600,250 1000,50 L1000,200 L0,200 Z' fill='rgba(142, 68, 173, 0.4)'/%3E%3C/svg%3E") 30% 100% / 1200px 250px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,150 C400,250 600,-50 1000,150 L1000,200 L0,200 Z' fill='rgba(110, 44, 138, 0.3)'/%3E%3C/svg%3E") 70% 100% / 1500px 300px repeat-x,
+                linear-gradient(to bottom, #1a0525 0%, #2a0a3a 50%, #4a155c 100%);
+            background-attachment: fixed;
+            color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 80px; /* Space for top nav */
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 25px;
+            left: 35px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 0.9rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+            z-index: 2; 
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Container to hold the upcoming receipt cards */
+        .receipts-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+        
+        
+                /* The Receipt Card - Now Solid White */
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px 40px 5px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            box-sizing: border-box;
+            color: #000000; /* Black text for the whole card */
+        }
+
+        .receipt-card h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .receipt-card p {
+            font-family: sans-serif;
+            margin-bottom: 20px;
+            color: #333333; /* Dark grey for secondary text */
+        }
+
+        /* 1. Encasing the table */
+        .purchases-table {
+            width: 100%;
+            border-collapse: collapse; 
+            margin-bottom: 20px;
+            font-family: sans-serif;
+            border: 2px solid #0a0a0a; 
+        }
+
+        /* 2. Vertical columns only (no top/bottom borders on standard rows) */
+        .purchases-table th, 
+        .purchases-table td {
+            background: #f0f0f0;
+            padding: 6px 15px;
+            text-align: left;
+            border-left: 2px solid #0a0a0a;
+            border-right: 2px solid #0a0a0a;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        /* 3. The specific horizontal line below the header */
+        .purchases-table th {
+            background: #f0f0f0; 
+            font-weight: bold;
+            border-bottom: 2px solid #0a0a0a; 
+        }
+        
+    </style>
+</head>
+<body>
+
+    <a href="{{ url_for('welcome') }}" class="nav-btn">Back to Dashboard</a>
+
+    <div class="receipts-container">
+        <h2>Your Receipt History</h2>
+        
+        <ul>
+            {% for receipt_id, nested_key in receipts_data.items() %}
+                <div class="receipt-card">
+                    <h3>{{ nested_key["Merchant"] }}</h3>
+                    <p>Date: {{ nested_key["Date"] }}</p>
+            <table class="purchases-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in nested_key["Purchases"] %}
+                        <tr>
+                            <td>{{ item[0] }}</td>
+                            <td>{{ item[1] }}</td>
+                            <td>£{{ item[2] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+                    <p><strong>Total: £{{ nested_key["Total"] }}</strong></p>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analytics</title>
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            background: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,100 C250,200 750,0 1000,100 L1000,200 L0,200 Z' fill='rgba(155, 89, 182, 0.6)'/%3E%3C/svg%3E") 0% 100% / 1000px 200px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,50 C300,-50 600,250 1000,50 L1000,200 L0,200 Z' fill='rgba(142, 68, 173, 0.4)'/%3E%3C/svg%3E") 30% 100% / 1200px 250px repeat-x,
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 200'%3E%3Cpath d='M0,150 C400,250 600,-50 1000,150 L1000,200 L0,200 Z' fill='rgba(110, 44, 138, 0.3)'/%3E%3C/svg%3E") 70% 100% / 1500px 300px repeat-x,
+                linear-gradient(to bottom, #1a0525 0%, #2a0a3a 50%, #4a155c 100%);
+            background-attachment: fixed;
+            color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 25px;
+            left: 35px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 0.9rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+            z-index: 2; 
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .receipts-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+        
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px 40px 25px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            box-sizing: border-box;
+            color: #000000;
+        }
+
+        .receipt-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-family: sans-serif;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group select:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .submit-btn {
+            background: #6e2c8a;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #4a155c;
+        }
+
+        .purchases-table {
+            width: 100%;
+            border-collapse: collapse; 
+            margin-top: 20px;
+            font-family: sans-serif;
+            border: 2px solid #0a0a0a; 
+        }
+
+        .purchases-table th, 
+        .purchases-table td {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            text-align: left;
+            border-left: 2px solid #0a0a0a;
+            border-right: 2px solid #0a0a0a;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .purchases-table th {
+            font-weight: bold;
+            border-bottom: 2px solid #0a0a0a; 
+        }
+        
+    </style>
+</head>
+<body>
+
+    <a href="{{ url_for('welcome') }}" class="nav-btn">Back to Home</a>
+
+    <div class="receipts-container">
+        <h2>Dashboard Analytics</h2>
+        
+        <div class="receipt-card">
+            <h3>Filter Data</h3>
+            <form class="filter-form" action="{{ url_for('dashboard') }}" method="POST">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="time_increment">Group By:</label>
+                        <select name="time_increment" id="time_increment">
+                            <option value="day">Day</option>
+                            <option value="month" selected>Month</option>
+                            <option value="year">Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="by_time">Time Range:</label>
+                        <select name="by_time" id="by_time">
+                            <option value="">All Time</option>
+                            <option value="7 days">Past 7 Days</option>
+                            <option value="1 month">Past Month</option>
+                            <option value="1 year">Past Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="by_category">Category:</label>
+                        <select name="by_category" id="by_category">
+                            <option value="">Any Category</option>
+                            {% for category in valid_groceries.keys() %}
+                                <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="by_item">Item:</label>
+                        <select name="by_item" id="by_item">
+                            <option value="">Any Item</option>
+                            {% for category, items in valid_groceries.items() %}
+                                <optgroup label="{{ category }}">
+                                    {% for item in items %}
+                                        <option value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Generate Report</button>
+            </form>
+        </div>
+
+        {% if table_data %}
+            <div class="receipt-card">
+                <h3>Results</h3>
+                
+                <button type="button" id="toggleViewBtn" class="submit-btn" style="margin-bottom: 20px;">View as Table</button>
+                
+                <div id="chartContainer" style="width: 100%; display: block;">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+
+                <div id="tableContainer" style="display: none;">
+                    <table class="purchases-table">
+                        <thead>
+                            <tr>
+                                <th>Date Period</th>
+                                <th>Total Spent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in table_data %}
+                                <tr>
+                                    <td>{{ row[1] }}</td>
+                                    <td>£{{ "%.2f"|format(row[0]) if row[0] else '0.00' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% elif request.method == 'POST' %}
+            <div class="receipt-card">
+                <h3>Results</h3>
+                <p style="font-family: sans-serif;">No data found for these filters.</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        // Mutual Exclusion for Category and Item dropdowns
+        const categoryInput = document.getElementById('by_category');
+        const itemInput = document.getElementById('by_item');
+
+        categoryInput.addEventListener('change', function() {
+            itemInput.disabled = this.value !== '';
+        });
+
+        itemInput.addEventListener('change', function() {
+            categoryInput.disabled = this.value !== '';
+        });
+
+        // Chart.js and Toggle Button Logic
+        {% if table_data %}
+            const chartLabels = [
+                {% for row in table_data %}
+                    "{{ row[1] }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+            
+            const chartData = [
+                {% for row in table_data %}
+                    {{ row[0] if row[0] else 0 }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Total Spent (£)',
+                        data: chartData,
+                        backgroundColor: 'rgba(155, 89, 182, 0.6)', 
+                        borderColor: 'rgba(110, 44, 138, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true } 
+                    }
+                }
+            });
+
+            const toggleBtn = document.getElementById('toggleViewBtn');
+            const chartDiv = document.getElementById('chartContainer');
+            const tableDiv = document.getElementById('tableContainer');
+
+            toggleBtn.addEventListener('click', function() {
+                if (chartDiv.style.display === 'none') {
+                    chartDiv.style.display = 'block';
+                    tableDiv.style.display = 'none';
+                    toggleBtn.textContent = 'View as Table';
+                } else {
+                    chartDiv.style.display = 'none';
+                    tableDiv.style.display = 'block';
+                    toggleBtn.textContent = 'View as Chart';
+                }
+            });
+        {% endif %}
+    </script>
+</body>
+</html>
